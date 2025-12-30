@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #4cc9f0;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --sidebar-bg: #111827;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #334155;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        /* Settings Container */
+        .settings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .settings-section {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-header i {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .setting-item label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+
+        .setting-item p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        select.form-input {
+            cursor: pointer;
+        }
+
+        /* Toggle Switch */
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toggle-item:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .toggle-info p {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Checkbox Group */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+            
+            .logo-text, .nav-text {
+                display: none;
+            }
+            
+            .nav-link i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="logo-text">Admin</div>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="provider.html" class="nav-link">
+                    <i class="fas fa-user-check"></i>
+                    <span class="nav-text">Provider Verification</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="users.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">User Management</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="reports.html" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="nav-text">Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="support.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    <span class="nav-text">Support</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="setting.html" class="nav-link active">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </li>
+        </ul>
+        
+        <a href="login.html" class="nav-link logout-btn" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="nav-text">Logout</span>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-title">
+                <h1>Settings</h1>
+                <p>Configure your account preferences and system settings</p>
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar">A</div>
+                <div class="user-info">
+                    <h4>Admin User</h4>
+                    <p>Administrator</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Settings Container -->
+        <div class="settings-container">
+            <!-- General Settings -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-sliders-h"></i>
+                    <div>
+                        <h2>General Settings</h2>
+                        <p>Basic platform configuration</p>
+                    </div>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <div class="setting-item">
+                            <label for="platformName">Platform Name</label>
+                            <input type="text" class="form-input" id="platformName" value="Admin">
+                            <p>This name will be displayed to users</p>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="supportEmail">Support Email</label>
+                            <input type="email" class="form-input" id="supportEmail" value="support@homeservicepro.com">
+                            <p>Email address for user support inquiries</p>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="timezone">Timezone</label>
+                            <select class="form-input" id="timezone">
+                                <option value="UTC-5">Eastern Time (ET)</option>
+                                <option value="UTC-6">Central Time (CT)</option>
+                                <option value="UTC-7">Mountain Time (MT)</option>
+                                <option value="UTC-8" selected>Pacific Time (PT)</option>
+                                <option value="UTC+0">GMT</option>
+                                <option value="UTC+5.5">IST (India)</option>
+                            </select>
+                            <p>Timezone for all system timestamps</p>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <div class="setting-item">
+                            <label for="currency">Currency</label>
+                            <select class="form-input" id="currency">
+                                <option value="USD">US Dollar ($)</option>
+                                <option value="EUR">Euro (€)</option>
+                                <option value="GBP">British Pound (£)</option>
+                                <option value="INR" selected>Indian Rupee (₹)</option>
+                            </select>
+                            <p>Default currency for all transactions</p>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="dateFormat">Date Format</label>
+                            <select class="form-input" id="dateFormat">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="DD/MM/YYYY" selected>DD/MM/YYYY</option>
+                                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                            </select>
+                            <p>Date format used across the platform</p>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="serviceFee">Service Fee (%)</label>
+                            <input type="number" class="form-input" id="serviceFee" value="15" min="0" max="100" step="0.5">
+                            <p>Platform commission on each booking</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Settings -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <h2>Security Settings</h2>
+                        <p>Configure security and authentication settings</p>
+                    </div>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <div class="toggle-item">
+                            <div class="toggle-info">
+                                <h4>Two-Factor Authentication</h4>
+                                <p>Add an extra layer of security to admin accounts</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="twoFactorToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="toggle-item">
+                            <div class="toggle-info">
+                                <h4>Session Timeout</h4>
+                                <p>Automatically log out inactive admin sessions</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="sessionTimeoutToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label>Session Timeout (minutes)</label>
+                            <input type="number" class="form-input" value="30" min="5" max="120">
+                            <p>Time after which inactive sessions are logged out</p>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <div class="toggle-item">
+                            <div class="toggle-info">
+                                <h4>Login Notifications</h4>
+                                <p>Send email notification for new admin logins</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="loginNotificationsToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label>Max Login Attempts</label>
+                            <input type="number" class="form-input" value="5" min="3" max="10">
+                            <p>Number of failed attempts before account lockout</p>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label>Password Policy</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="uppercaseReq" checked>
+                                    <label for="uppercaseReq">Require uppercase letters</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="numbersReq" checked>
+                                    <label for="numbersReq">Require numbers</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="specialReq">
+                                    <label for="specialReq">Require special characters</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="minLengthReq" checked>
+                                    <label for="minLengthReq">Minimum 8 characters</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notification Settings -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-bell"></i>
+                    <div>
+                        <h2>Notification Settings</h2>
+                        <p>Configure email and system notifications</p>
+                    </div>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3 style="margin-bottom: 15px; color: var(--text-primary);">Email Notifications</h3>
+                        
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="emailNewProvider" checked>
+                                <label for="emailNewProvider">New provider registrations</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="emailSupportTicket" checked>
+                                <label for="emailSupportTicket">New support tickets</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="emailUserReport" checked>
+                                <label for="emailUserReport">User reports</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="emailSystemAlert" checked>
+                                <label for="emailSystemAlert">System alerts</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="emailWeeklyReport">
+                                <label for="emailWeeklyReport">Weekly reports</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h3 style="margin-bottom: 15px; color: var(--text-primary);">System Notifications</h3>
+                        
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="notifyNewBooking" checked>
+                                <label for="notifyNewBooking">New bookings</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="notifyCancellation" checked>
+                                <label for="notifyCancellation">Booking cancellations</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="notifyPaymentIssue" checked>
+                                <label for="notifyPaymentIssue">Payment issues</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="notifyProviderApproval" checked>
+                                <label for="notifyProviderApproval">Provider approvals</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payment Settings -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-credit-card"></i>
+                    <div>
+                        <h2>Payment Settings</h2>
+                        <p>Configure payment gateways and settings</p>
+                    </div>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <div class="setting-item">
+                            <label for="paymentGateway">Payment Gateway</label>
+                            <select class="form-input" id="paymentGateway">
+                                <option value="stripe">Stripe</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="razorpay" selected>Razorpay</option>
+                                <option value="paytm">Paytm</option>
+                            </select>
+                            <p>Primary payment gateway for transactions</p>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label>Payment Methods</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="methodCard" checked>
+                                    <label for="methodCard">Credit/Debit Cards</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="methodUpi" checked>
+                                    <label for="methodUpi">UPI</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="methodNetbanking">
+                                    <label for="methodNetbanking">Net Banking</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="methodWallet">
+                                    <label for="methodWallet">Digital Wallets</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <div class="setting-item">
+                            <label for="payoutSchedule">Provider Payout Schedule</label>
+                            <select class="form-input" id="payoutSchedule">
+                                <option value="daily">Daily</option>
+                                <option value="weekly" selected>Weekly</option>
+                                <option value="biweekly">Bi-weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                            <p>How often providers receive their earnings</p>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="minimumPayout">Minimum Payout Amount</label>
+                            <input type="number" class="form-input" id="minimumPayout" value="500" min="100">
+                            <p>Minimum amount required for provider payout</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Backup Settings -->
+            <section class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-database"></i>
+                    <div>
+                        <h2>Backup Settings</h2>
+                        <p>Configure system backups and data retention</p>
+                    </div>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <div class="toggle-item">
+                            <div class="toggle-info">
+                                <h4>Automatic Backups</h4>
+                                <p>Automatically backup system data</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoBackupToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="backupFrequency">Backup Frequency</label>
+                            <select class="form-input" id="backupFrequency">
+                                <option value="daily">Daily</option>
+                                <option value="weekly" selected>Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                            <p>How often automatic backups occur</p>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <div class="setting-item">
+                            <label for="retentionPeriod">Retention Period (days)</label>
+                            <input type="number" class="form-input" id="retentionPeriod" value="30" min="7" max="365">
+                            <p>How long to keep backup files</p>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label for="backupLocation">Backup Storage</label>
+                            <select class="form-input" id="backupLocation">
+                                <option value="local" selected>Local Server</option>
+                                <option value="aws">Amazon S3</option>
+                                <option value="google">Google Cloud</option>
+                            </select>
+                            <p>Where backup files are stored</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="manualBackupBtn">
+                        <i class="fas fa-download"></i> Create Manual Backup
+                    </button>
+                    <button class="btn btn-secondary" id="viewBackupsBtn">
+                        <i class="fas fa-history"></i> View Backup History
+                    </button>
+                </div>
+            </section>
+
+            
+
+            <!-- Save Button -->
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="cancelBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-save"></i> Save All Changes
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2023 Admin Dashboard. All rights reserved.</p>
+            <p>Last updated: <span id="currentDate"></span></p>
+        </footer>
+    </main>
+
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') || sessionStorage.getItem('isLoggedIn');
+            
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Set current date in footer
+            const currentDate = new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentDate').textContent = currentDate;
+
+            // Highlight current page in sidebar
+            highlightCurrentPage();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Setup logout functionality
+            setupLogout();
+        });
+
+        // Function to highlight current page in sidebar
+        function highlightCurrentPage() {
+            const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const href = link.getAttribute('href');
+                if (href === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Save button
+            document.getElementById('saveBtn').addEventListener('click', saveSettings);
+            
+            // Cancel button
+            document.getElementById('cancelBtn').addEventListener('click', cancelChanges);
+            
+            // Manual backup button
+            document.getElementById('manualBackupBtn').addEventListener('click', createManualBackup);
+            
+            // View backups button
+            document.getElementById('viewBackupsBtn').addEventListener('click', viewBackupHistory);
+            
+            // Danger zone buttons
+            document.getElementById('clearCacheBtn').addEventListener('click', clearSystemCache);
+            document.getElementById('resetSettingsBtn').addEventListener('click', resetToDefaults);
+            document.getElementById('exportDataBtn').addEventListener('click', exportAllData);
+        }
+
+        // Setup Logout
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('username');
+                
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Save Settings
+        function saveSettings() {
+            // In a real app, this would send data to the server
+            showNotification('Settings saved successfully!');
+        }
+
+        // Cancel Changes
+        function cancelChanges() {
+            if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
+                // Reload the page to reset all changes
+                window.location.reload();
+            }
+        }
+
+        // Create Manual Backup
+        function createManualBackup() {
+            if (confirm('Create a manual backup of the system?')) {
+                showNotification('Backup process started. You will be notified when complete.');
+                
+                // Simulate backup process
+                setTimeout(() => {
+                    showNotification('Backup completed successfully!');
+                }, 3000);
+            }
+        }
+
+        // View Backup History
+        function viewBackupHistory() {
+            showNotification('Backup history would be displayed here');
+            // In a real app, this would open a modal with backup history
+        }
+
+        // Clear System Cache
+        function clearSystemCache() {
+            if (confirm('Clear all system cache? This may temporarily affect performance.')) {
+                showNotification('System cache cleared successfully!');
+            }
+        }
+
+        // Reset to Defaults
+        function resetToDefaults() {
+            if (confirm('Reset all settings to default values? This action cannot be undone.')) {
+                showNotification('All settings have been reset to default values.');
+                // In a real app, this would reload the page with default values
+            }
+        }
+
+        // Export All Data
+        function exportAllData() {
+            if (confirm('Export all system data? This may take several minutes.')) {
+                showNotification('Data export started. You will receive an email with the download link.');
+            }
+        }
+
+        // Show Notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
