@@ -1,0 +1,176 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255),
+    phone VARCHAR(15),
+    address TEXT,
+    status ENUM('active','inactive') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE providers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255),
+    phone VARCHAR(15),
+    service_category VARCHAR(100),
+    experience VARCHAR(100),
+    portfolio TEXT,
+    earnings DECIMAL(10,2) DEFAULT 0,
+    status ENUM('pending','approved','rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `provider_details` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `provider_id` int(11) NOT NULL,
+    `experience` varchar(50) DEFAULT NULL,
+    `hourly_rate` decimal(10,2) DEFAULT NULL,
+    `services` text DEFAULT NULL,
+    `about` text DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    PRIMARY KEY (`id`),
+    KEY `provider_id` (`provider_id`),
+    CONSTRAINT `provider_details_ibfk_1` FOREIGN KEY (`provider_id`) REFERENCES `providers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100),
+    password VARCHAR(255)
+);
+
+CREATE TABLE services (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    provider_id INT,
+    service_name VARCHAR(100),
+    description TEXT,
+    price DECIMAL(10,2),
+    image VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (provider_id) REFERENCES providers(id) ON DELETE CASCADE
+);
+
+INSERT INTO services (service_name) VALUES
+('Plumber'),
+('Electrician'),
+('Carpenter'),
+('Painter'),
+('AC Technician'),
+('Home Cleaning');
+
+CREATE TABLE cart (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    service_id INT,
+    quantity INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
+);
+
+CREATE TABLE bookings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    provider_id INT,
+    service_id INT,
+    booking_date DATE,
+    booking_time VARCHAR(50),
+    total_amount DECIMAL(10,2),
+    status ENUM('pending','confirmed','completed','cancelled') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (provider_id) REFERENCES providers(id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
+);
+
+CREATE TABLE support_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    message TEXT,
+    reply TEXT,
+    status ENUM('open','closed') DEFAULT 'open',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Appointments table
+CREATE TABLE IF NOT EXISTS `appointments` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `provider_id` int(11) NOT NULL,
+    `user_id` int(11) NOT NULL,
+    `service_name` varchar(255) NOT NULL,
+    `appointment_date` date NOT NULL,
+    `appointment_time` time NOT NULL,
+    `amount` decimal(10,2) NOT NULL,
+    `status` enum('pending','confirmed','completed','cancelled') DEFAULT 'pending',
+    `payment_status` enum('pending','paid','failed') DEFAULT 'pending',
+    `address` text,
+    `notes` text,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    PRIMARY KEY (`id`),
+    KEY `provider_id` (`provider_id`),
+    KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Earnings table
+CREATE TABLE IF NOT EXISTS `earnings` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `provider_id` int(11) NOT NULL,
+    `appointment_id` int(11) DEFAULT NULL,
+    `amount` decimal(10,2) NOT NULL,
+    `earning_date` date NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    PRIMARY KEY (`id`),
+    KEY `provider_id` (`provider_id`),
+    KEY `appointment_id` (`appointment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Reviews table
+CREATE TABLE IF NOT EXISTS `reviews` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `provider_id` int(11) NOT NULL,
+    `user_id` int(11) NOT NULL,
+    `appointment_id` int(11) DEFAULT NULL,
+    `rating` int(11) NOT NULL CHECK (`rating` >= 1 AND `rating` <= 5),
+    `comment` text,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    PRIMARY KEY (`id`),
+    KEY `provider_id` (`provider_id`),
+    KEY `user_id` (`user_id`),
+    KEY `appointment_id` (`appointment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Notifications table
+CREATE TABLE IF NOT EXISTS `notifications` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `provider_id` int(11) NOT NULL,
+    `type` enum('appointment','payment','review','system') DEFAULT 'system',
+    `message` text NOT NULL,
+    `is_read` tinyint(1) DEFAULT 0,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    PRIMARY KEY (`id`),
+    KEY `provider_id` (`provider_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Insert sample data for testing (optional)
+INSERT INTO `appointments` (`provider_id`, `user_id`, `service_name`, `appointment_date`, `appointment_time`, `amount`, `status`, `payment_status`) VALUES
+(1, 1, 'Plumbing Repair', '2026-02-21', '10:00:00', 500.00, 'completed', 'paid'),
+(1, 2, 'Electrical Wiring', '2026-02-22', '14:00:00', 800.00, 'pending', 'pending'),
+(1, 3, 'AC Service', '2026-02-23', '11:30:00', 1200.00, 'confirmed', 'paid');
+
+INSERT INTO `earnings` (`provider_id`, `appointment_id`, `amount`, `earning_date`, `description`) VALUES
+(1, 1, 500.00, '2026-02-21', 'Plumbing Repair'),
+(1, 3, 1200.00, '2026-02-23', 'AC Service');
+
+INSERT INTO `reviews` (`provider_id`, `user_id`, `appointment_id`, `rating`, `comment`) VALUES
+(1, 1, 1, 5, 'Excellent work! Very professional.'),
+(1, 3, 3, 4, 'Good service, but a bit late.');
+
+INSERT INTO `notifications` (`provider_id`, `type`, `message`, `is_read`) VALUES
+(1, 'appointment', 'New appointment booked for Plumbing Repair', 0),
+(1, 'payment', 'Payment received of ₹500', 1),
+(1, 'review', 'New 5-star review received', 0);
